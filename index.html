@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="8Бит — AI-автоматизация бизнеса: AI-агенты, RAG-системы, OCR и workflow-интеграции." />
+  <title>8Бит — AI-автоматизация бизнеса</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Design tokens */
+    :root {
+      color-scheme: light;
+      --bg: #f8fafc;
+      --surface: rgba(255, 255, 255, 0.78);
+      --surface-solid: #ffffff;
+      --text: #0f172a;
+      --muted: #64748b;
+      --border: rgba(15, 23, 42, 0.1);
+      --cyan: #06b6d4;
+      --violet: #8b5cf6;
+      --blue: #3b82f6;
+      --green: #22c55e;
+      --shadow-soft: 0 18px 60px rgba(15, 23, 42, 0.08);
+      --shadow-glow: 0 4px 20px rgba(6, 182, 212, 0.15), 0 14px 45px rgba(139, 92, 246, 0.12);
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 28px;
+      --container: 1160px;
+      --header-height: 76px;
+    }
+
+    [data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #020617;
+      --surface: rgba(15, 23, 42, 0.76);
+      --surface-solid: #0f172a;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --border: rgba(148, 163, 184, 0.18);
+      --shadow-soft: 0 18px 60px rgba(0, 0, 0, 0.34);
+      --shadow-glow: 0 4px 24px rgba(6, 182, 212, 0.22), 0 18px 55px rgba(139, 92, 246, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(6, 182, 212, 0.16), transparent 34rem),
+        radial-gradient(circle at 85% 12%, rgba(139, 92, 246, 0.14), transparent 30rem),
+        var(--bg);
+      overflow-x: hidden;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(100, 116, 139, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(100, 116, 139, 0.06) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: linear-gradient(to bottom, black, transparent 78%);
+    }
+
+    h1,
+    h2,
+    h3 {
+      margin: 0;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      line-height: 1.1;
+      letter-spacing: -0.04em;
+    }
+
+    p {
+      margin: 0;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(100% - 32px, var(--container));
+      margin-inline: auto;
+    }
+
+    .section {
+      padding: 76px 0;
+    }
+
+    .section-header {
+      max-width: 680px;
+      margin: 0 auto 34px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--blue);
+      background: rgba(59, 130, 246, 0.08);
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 5vw, 3.05rem);
+    }
+
+    .section-text {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--cyan), var(--violet), var(--blue));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      min-height: 46px;
+      padding: 12px 18px;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      font-weight: 800;
+      line-height: 1;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-primary {
+      color: white;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 12px 34px rgba(6, 182, 212, 0.24), 0 14px 34px rgba(139, 92, 246, 0.18);
+    }
+
+    .btn-outline {
+      color: var(--text);
+      border-color: var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+    }
+
+    .btn-outline:hover {
+      border-color: rgba(6, 182, 212, 0.45);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+    }
+
+    /* Header */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      min-height: var(--header-height);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      min-height: var(--header-height);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+    }
+
+    .logo-mark {
+      display: grid;
+      place-items: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 13px;
+      color: white;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.22);
+    }
+
+    .nav {
+      display: none;
+      align-items: center;
+      gap: 24px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .nav a {
+      transition: color 0.2s ease;
+    }
+
+    .nav a:hover {
+      color: var(--text);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-cta {
+      display: none;
+    }
+
+    .theme-toggle {
+      display: inline-grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.1);
+    }
+
+    .theme-toggle .moon-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .sun-icon {
+      display: none;
+    }
+
+    [data-theme="dark"] .theme-toggle .moon-icon {
+      display: block;
+    }
+
+    /* Hero section */
+    .hero {
+      position: relative;
+      padding: 70px 0 62px;
+    }
+
+    .hero-grid {
+      display: grid;
+      align-items: center;
+      gap: 46px;
+    }
+
+    .hero-content {
+      text-align: center;
+    }
+
+    .hero h1 {
+      max-width: 780px;
+      margin: 0 auto;
+      font-size: clamp(2.35rem, 9vw, 4.7rem);
+    }
+
+    .hero-subtitle {
+      max-width: 700px;
+      margin: 22px auto 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.16rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 360px;
+      margin: 30px auto 0;
+    }
+
+    .hero-proof {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.94rem;
+      font-weight: 700;
+    }
+
+    .proof-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.46);
+    }
+
+    [data-theme="dark"] .proof-item {
+      background: rgba(15, 23, 42, 0.46);
+    }
+
+    .hero-visual {
+      position: relative;
+      width: min(100%, 470px);
+      margin: 0 auto;
+      padding: 24px;
+    }
+
+    .emblem-shell {
+      position: relative;
+      isolation: isolate;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(139, 92, 246, 0.1)),
+        var(--surface-solid);
+      box-shadow: var(--shadow-glow);
+      animation: glowPulse 4s ease-in-out infinite;
+    }
+
+    .emblem-shell::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      z-index: -1;
+      background: conic-gradient(from 140deg, transparent, rgba(6, 182, 212, 0.35), rgba(139, 92, 246, 0.4), transparent);
+      animation: spinGlow 10s linear infinite;
+    }
+
+    .emblem-image {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: var(--radius-xl);
+    }
+
+    .floating-badge {
+      position: absolute;
+      z-index: 3;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 10px 13px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+      backdrop-filter: blur(18px);
+      box-shadow: var(--shadow-soft);
+      font-size: 0.88rem;
+      font-weight: 800;
+      white-space: nowrap;
+      animation: floatBadge 4.8s ease-in-out infinite;
+    }
+
+    .floating-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 0 18px rgba(6, 182, 212, 0.75);
+    }
+
+    .badge-one {
+      top: 8%;
+      left: 2%;
+    }
+
+    .badge-two {
+      top: 17%;
+      right: 0;
+      animation-delay: -1.2s;
+    }
+
+    .badge-three {
+      bottom: 18%;
+      left: 0;
+      animation-delay: -2.1s;
+    }
+
+    .badge-four {
+      right: 4%;
+      bottom: 7%;
+      animation-delay: -3s;
+    }
+
+    @keyframes glowPulse {
+      0%,
+      100% {
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15), 0 14px 45px rgba(139, 92, 246, 0.12);
+      }
+
+      50% {
+        box-shadow: 0 4px 32px rgba(6, 182, 212, 0.28), 0 18px 64px rgba(139, 92, 246, 0.24);
+      }
+    }
+
+    @keyframes spinGlow {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes floatBadge {
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
+    }
+
+    /* Services grid */
+    .services-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .service-card {
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+      padding: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(18px);
+      transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .service-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cyan), var(--violet), var(--blue));
+      opacity: 0;
+      transition: opacity 0.22s ease;
+    }
+
+    .service-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(6, 182, 212, 0.36);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15), 0 20px 55px rgba(15, 23, 42, 0.08);
+    }
+
+    .service-card:hover::before {
+      opacity: 1;
+    }
+
+    .service-icon {
+      display: grid;
+      place-items: center;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 20px;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.18);
+    }
+
+    .service-card h3 {
+      font-size: 1.28rem;
+    }
+
+    .service-card p {
+      margin-top: 12px;
+      color: var(--muted);
+    }
+
+    .service-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .tag {
+      padding: 6px 9px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      background: rgba(6, 182, 212, 0.06);
+    }
+
+    /* Process */
+    .process {
+      padding-top: 16px;
+    }
+
+    .process-list {
+      display: grid;
+      gap: 14px;
+      counter-reset: step;
+    }
+
+    .process-item {
+      position: relative;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .process-item::before {
+      counter-increment: step;
+      content: "0" counter(step);
+      display: inline-flex;
+      margin-bottom: 10px;
+      color: var(--cyan);
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+
+    .process-item h3 {
+      font-size: 1.12rem;
+    }
+
+    .process-item p {
+      margin-top: 8px;
+      color: var(--muted);
+    }
+
+    /* Contact form */
+    .contact-card {
+      width: min(100%, 720px);
+      margin: 0 auto;
+      padding: clamp(24px, 5vw, 38px);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: var(--surface-solid);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15), 0 24px 70px rgba(15, 23, 42, 0.1);
+    }
+
+    .contact-form {
+      display: grid;
+      gap: 16px;
+      margin-top: 26px;
+    }
+
+    .field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .field label {
+      font-weight: 800;
+    }
+
+    .field input,
+    .field textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      background: var(--bg);
+      outline: none;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .field input {
+      min-height: 48px;
+      padding: 0 14px;
+    }
+
+    .field textarea {
+      min-height: 132px;
+      padding: 14px;
+      resize: vertical;
+    }
+
+    .field input:focus,
+    .field textarea:focus {
+      border-color: rgba(6, 182, 212, 0.6);
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.12);
+    }
+
+    .success-message {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 26px;
+      padding: 18px;
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      border-radius: var(--radius-lg);
+      color: #15803d;
+      background: rgba(34, 197, 94, 0.1);
+      font-weight: 800;
+      text-align: center;
+    }
+
+    [data-theme="dark"] .success-message {
+      color: #86efac;
+    }
+
+    .success-message.is-visible {
+      display: flex;
+    }
+
+    /* AI widget */
+    .ai-widget {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 80;
+    }
+
+    .ai-toggle {
+      display: grid;
+      place-items: center;
+      width: 60px;
+      height: 60px;
+      border: 0;
+      border-radius: 999px;
+      color: white;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.28), 0 20px 44px rgba(139, 92, 246, 0.22);
+    }
+
+    .ai-panel {
+      position: absolute;
+      right: 0;
+      bottom: 76px;
+      display: none;
+      flex-direction: column;
+      width: min(calc(100vw - 36px), 370px);
+      max-height: 560px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: var(--surface-solid);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15), 0 24px 80px rgba(15, 23, 42, 0.22);
+    }
+
+    .ai-panel.is-open {
+      display: flex;
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(139, 92, 246, 0.1));
+    }
+
+    .ai-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 900;
+    }
+
+    .ai-close {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text);
+      background: var(--surface);
+    }
+
+    .ai-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 210px;
+      max-height: 300px;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .message {
+      max-width: 86%;
+      padding: 11px 13px;
+      border-radius: 16px;
+      font-size: 0.94rem;
+    }
+
+    .message.bot {
+      align-self: flex-start;
+      color: var(--text);
+      background: rgba(100, 116, 139, 0.12);
+      border-top-left-radius: 6px;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      color: white;
+      background: linear-gradient(135deg, var(--cyan), var(--violet));
+      border-top-right-radius: 6px;
+    }
+
+    .ai-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 0 16px 16px;
+    }
+
+    .ai-chip {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 9px 11px;
+      color: var(--text);
+      background: var(--surface);
+      font-size: 0.9rem;
+      font-weight: 800;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+    }
+
+    .ai-chip:hover {
+      transform: translateY(-2px);
+      border-color: rgba(6, 182, 212, 0.48);
+    }
+
+    /* Footer */
+    .footer {
+      padding: 32px 0;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* Responsive */
+    @media (min-width: 640px) {
+      .hero-actions {
+        flex-direction: row;
+        justify-content: center;
+        max-width: none;
+      }
+
+      .services-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .process-list {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .header-cta {
+        display: inline-flex;
+      }
+    }
+
+    @media (min-width: 900px) {
+      .nav {
+        display: flex;
+      }
+
+      .hero {
+        padding: 96px 0 82px;
+      }
+
+      .hero-grid {
+        grid-template-columns: minmax(0, 1.06fr) minmax(360px, 0.94fr);
+      }
+
+      .hero-content {
+        text-align: left;
+      }
+
+      .hero h1,
+      .hero-subtitle {
+        margin-left: 0;
+      }
+
+      .hero-actions,
+      .hero-proof {
+        justify-content: flex-start;
+        margin-left: 0;
+      }
+
+      .hero-visual {
+        margin-right: 0;
+      }
+    }
+
+    @media (min-width: 1040px) {
+      .services-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        width: min(100% - 24px, var(--container));
+      }
+
+      .logo span:last-child {
+        display: none;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .floating-badge {
+        font-size: 0.78rem;
+        padding: 8px 10px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="logo" href="#top" aria-label="8Бит — на главную">
+        <span class="logo-mark" aria-hidden="true">
+          <i data-lucide="bot"></i>
+        </span>
+        <span>8Бит</span>
+      </a>
+
+      <nav class="nav" aria-label="Основная навигация">
+        <a href="#services">Услуги</a>
+        <a href="#process">Как работаем</a>
+        <a href="#contact">Контакты</a>
+      </nav>
+
+      <div class="header-actions">
+        <a class="btn btn-primary header-cta" href="#contact">Оставить заявку</a>
+        <button class="theme-toggle" type="button" aria-label="Переключить тему" id="themeToggle">
+          <i class="sun-icon" data-lucide="sun"></i>
+          <i class="moon-icon" data-lucide="moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-content">
+          <div class="eyebrow">
+            <i data-lucide="sparkles" width="16" height="16"></i>
+            Engineering-first AI automation
+          </div>
+
+          <h1>AI-автоматизация бизнеса <span class="gradient-text">без лишней сложности</span></h1>
+
+          <p class="hero-subtitle">
+            Создаем AI-агентов, RAG-системы и интеллектуальные workflow. Берем рутину на себя — вам оставляем время для роста.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contact">
+              Обсудить проект
+              <i data-lucide="arrow-right" width="18" height="18"></i>
+            </a>
+            <a class="btn btn-outline" href="#services">Посмотреть решения</a>
+          </div>
+
+          <div class="hero-proof" aria-label="Ключевые компетенции">
+            <span class="proof-item"><i data-lucide="shield-check" width="16" height="16"></i> Production-ready</span>
+            <span class="proof-item"><i data-lucide="workflow" width="16" height="16"></i> n8n / Airflow</span>
+            <span class="proof-item"><i data-lucide="database-zap" width="16" height="16"></i> RAG / OCR</span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-label="AI-эмблема 8Бит">
+          <span class="floating-badge badge-one">AI Agents</span>
+          <span class="floating-badge badge-two">RAG Systems</span>
+          <span class="floating-badge badge-three">n8n</span>
+          <span class="floating-badge badge-four">OCR AI</span>
+
+          <div class="emblem-shell">
+            <img
+              class="emblem-image"
+              src="./8BIT.jpg"
+              alt="Эмблема 8Бит: пиксельная и AI-эстетика"
+              loading="eager"
+              onerror="this.onerror=null; this.src='https://placehold.co/900x900/0f172a/ffffff?text=8%D0%91%D0%B8%D1%82+AI';"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Services Grid -->
+    <section class="section" id="services">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">
+            <i data-lucide="cpu" width="16" height="16"></i>
+            Что мы делаем
+          </div>
+          <h2 class="section-title">Собираем AI-решения вокруг ваших процессов</h2>
+          <p class="section-text">
+            От прототипа до внедрения: проектируем архитектуру, интегрируемся с системами и доводим решение до измеримого результата.
+          </p>
+        </div>
+
+        <div class="services-grid">
+          <article class="service-card">
+            <div class="service-icon">
+              <i data-lucide="bot"></i>
+            </div>
+            <h3>AI-агенты и ассистенты</h3>
+            <p>Разрабатываем ассистентов для продаж, поддержки, аналитики и внутренних команд.</p>
+            <div class="service-tags">
+              <span class="tag">LangChain</span>
+              <span class="tag">OpenAI</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <i data-lucide="search-check"></i>
+            </div>
+            <h3>RAG базы знаний</h3>
+            <p>Создаем интеллектуальный поиск по документам, регламентам, базам знаний и корпоративным данным.</p>
+            <div class="service-tags">
+              <span class="tag">Vector DB</span>
+              <span class="tag">Semantic Search</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <i data-lucide="file-scan"></i>
+            </div>
+            <h3>Обработка документов</h3>
+            <p>Автоматизируем OCR, извлечение полей, классификацию и валидацию данных.</p>
+            <div class="service-tags">
+              <span class="tag">OCR</span>
+              <span class="tag">Validation</span>
+            </div>
+          </article>
+
+          <article class="service-card">
+            <div class="service-icon">
+              <i data-lucide="workflow"></i>
+            </div>
+            <h3>Интеграции и Workflow</h3>
+            <p>Связываем AI с CRM, ERP, мессенджерами, таблицами, API и внутренними сервисами.</p>
+            <div class="service-tags">
+              <span class="tag">n8n</span>
+              <span class="tag">CRM / ERP</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="section process" id="process">
+      <div class="container">
+        <div class="section-header">
+          <div class="eyebrow">
+            <i data-lucide="route" width="16" height="16"></i>
+            Как работаем
+          </div>
+          <h2 class="section-title">Быстро проверяем гипотезу и аккуратно внедряем</h2>
+        </div>
+
+        <div class="process-list">
+          <article class="process-item">
+            <h3>Диагностика</h3>
+            <p>Разбираем процесс, данные, ограничения и считаем ожидаемый эффект автоматизации.</p>
+          </article>
+
+          <article class="process-item">
+            <h3>Прототип</h3>
+            <p>Собираем рабочий сценарий, тестируем качество ответов, OCR или интеграций.</p>
+          </article>
+
+          <article class="process-item">
+            <h3>Внедрение</h3>
+            <p>Доводим решение до production, подключаем мониторинг и передаем понятную документацию.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form -->
+    <section class="section" id="contact">
+      <div class="container">
+        <div class="contact-card">
+          <div class="section-header" style="margin-bottom: 0;">
+            <div class="eyebrow">
+              <i data-lucide="send" width="16" height="16"></i>
+              Заявка
+            </div>
+            <h2 class="section-title">Расскажите, что хотите автоматизировать</h2>
+            <p class="section-text">
+              Мы посмотрим задачу и предложим понятный следующий шаг: аудит, прототип или полноценное внедрение.
+            </p>
+          </div>
+
+          <form class="contact-form" id="contactForm">
+            <div class="field">
+              <label for="name">Имя</label>
+              <input id="name" name="name" type="text" placeholder="Как к вам обращаться" autocomplete="name" required />
+            </div>
+
+            <div class="field">
+              <label for="contactValue">Telegram / Email</label>
+              <input id="contactValue" name="contact" type="text" placeholder="@username или name@company.ru" autocomplete="email" required />
+            </div>
+
+            <div class="field">
+              <label for="task">Кратко о задаче</label>
+              <textarea id="task" name="task" placeholder="Например: хотим автоматизировать обработку заявок и поиск по внутренним документам" required></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit">
+              Отправить заявку
+              <i data-lucide="check-circle" width="18" height="18"></i>
+            </button>
+          </form>
+
+          <div class="success-message" id="successMessage" role="status" aria-live="polite">
+            <i data-lucide="circle-check-big"></i>
+            Заявка принята! Мы свяжемся с вами.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- AI Widget -->
+  <aside class="ai-widget" aria-label="AI-помощник">
+    <div class="ai-panel" id="aiPanel" aria-hidden="true">
+      <div class="ai-header">
+        <div class="ai-title">
+          <i data-lucide="bot"></i>
+          AI-помощник 8Бит
+        </div>
+        <button class="ai-close" type="button" id="aiClose" aria-label="Закрыть чат">
+          <i data-lucide="x" width="18" height="18"></i>
+        </button>
+      </div>
+
+      <div class="ai-messages" id="aiMessages">
+        <div class="message bot">
+          Привет! Подскажу, какое AI-решение подойдет под вашу задачу.
+        </div>
+      </div>
+
+      <div class="ai-chips" id="aiChips">
+        <button class="ai-chip" type="button">Мне нужен AI-бот</button>
+        <button class="ai-chip" type="button">Поиск по документам</button>
+        <button class="ai-chip" type="button">Связать системы</button>
+      </div>
+    </div>
+
+    <button class="ai-toggle" type="button" id="aiToggle" aria-label="Открыть AI-помощника" aria-expanded="false">
+      <i data-lucide="message-circle"></i>
+    </button>
+  </aside>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      © <span id="year"></span> 8Бит. AI-автоматизация бизнеса.
+    </div>
+  </footer>
+
+  <script>
+    // Lucide icons initialization.
+    lucide.createIcons();
+
+    // Theme switcher with localStorage persistence.
+    const html = document.documentElement;
+    const themeToggle = document.getElementById("themeToggle");
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+    if (savedTheme) {
+      html.dataset.theme = savedTheme;
+    } else if (prefersDark) {
+      html.dataset.theme = "dark";
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const nextTheme = html.dataset.theme === "dark" ? "light" : "dark";
+      html.dataset.theme = nextTheme;
+      localStorage.setItem("theme", nextTheme);
+    });
+
+    // Contact form success state.
+    const contactForm = document.getElementById("contactForm");
+    const successMessage = document.getElementById("successMessage");
+
+    contactForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      contactForm.style.display = "none";
+      successMessage.classList.add("is-visible");
+    });
+
+    // AI widget quick answers and automatic scroll to the contact form.
+    const aiToggle = document.getElementById("aiToggle");
+    const aiClose = document.getElementById("aiClose");
+    const aiPanel = document.getElementById("aiPanel");
+    const aiMessages = document.getElementById("aiMessages");
+    const aiChips = document.getElementById("aiChips");
+
+    const answers = {
+      "Мне нужен AI-бот": "Отлично! Мы создаем ботов на базе LLM для поддержки, продаж и внутренних процессов. Оставьте заявку, чтобы обсудить сценарии.",
+      "Поиск по документам": "Хороший кейс для RAG-системы. Подключим документы, настроим семантический поиск и контроль качества ответов. Оставьте заявку.",
+      "Связать системы": "Это можно решить через n8n, Airflow и API-интеграции. Поможем связать CRM, ERP, мессенджеры и AI-логику. Оставьте заявку."
+    };
+
+    function setPanelState(isOpen) {
+      aiPanel.classList.toggle("is-open", isOpen);
+      aiPanel.setAttribute("aria-hidden", String(!isOpen));
+      aiToggle.setAttribute("aria-expanded", String(isOpen));
+    }
+
+    function addMessage(text, type) {
+      const message = document.createElement("div");
+      message.className = `message ${type}`;
+      message.textContent = text;
+      aiMessages.appendChild(message);
+      aiMessages.scrollTo({
+        top: aiMessages.scrollHeight,
+        behavior: "smooth"
+      });
+    }
+
+    aiToggle.addEventListener("click", () => {
+      setPanelState(!aiPanel.classList.contains("is-open"));
+    });
+
+    aiClose.addEventListener("click", () => {
+      setPanelState(false);
+    });
+
+    aiChips.addEventListener("click", (event) => {
+      const chip = event.target.closest(".ai-chip");
+
+      if (!chip) {
+        return;
+      }
+
+      const text = chip.textContent.trim();
+      addMessage(text, "user");
+      chip.remove();
+
+      window.setTimeout(() => {
+        addMessage(answers[text] || "Отлично! Оставьте заявку, и мы подберем решение под вашу задачу.", "bot");
+        document.getElementById("contact").scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }, 1000);
+    });
+
+    // Current year in footer.
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
